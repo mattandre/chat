@@ -2,48 +2,28 @@ require 'spec_helper'
 
 describe "Pages" do
 
-	let(:base_title) { "Live Chat" }
+  subject { page }
 
   describe "Home page" do
+    before { visit root_path }
 
-    it "should have the content 'Live Chat'" do
-      visit '/pages/home'
-      expect(page).to have_content('Live Chat')
-    end
-
-    it "should have the title 'Home'" do
-    	visit '/pages/home'
-    	expect(page).to have_title("#{base_title} | Home")
-    end
-
+    it { should have_content('Live Chat') }
+    it { should have_title(full_title('')) }
+    it { should_not have_title('| Home') }
   end
 
   describe "Help page" do
+    before { visit help_path } 
 
-    it "should have the content 'Help'" do
-      visit '/pages/help'
-      expect(page).to have_content('Help')
-    end
-
-    it "should have the title 'Help'" do
-      visit '/pages/help'
-      expect(page).to have_title("#{base_title} | Help")
-    end
-
+    it { should have_content('Help') }
+    it { should have_title(full_title('Help')) }
   end
 
   describe "About page" do
+    before { visit about_path }
 
-    it "should have the content 'About'" do
-      visit '/pages/about'
-      expect(page).to have_content('About')
-    end
-
-    it "should have the title 'About'" do
-      visit '/pages/about'
-      expect(page).to have_title("#{base_title} | About")
-    end
-
+    it { should have_content('About') }
+    it { should have_title(full_title('About')) }
   end
 
 end

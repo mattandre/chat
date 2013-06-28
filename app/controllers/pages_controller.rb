@@ -5,6 +5,6 @@ class PagesController < ApplicationController
   def help
   end
 
-  def about
+  def about 
   end
 end
