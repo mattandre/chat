@@ -1,16 +1,33 @@
 Livechat::Application.routes.draw do
 	
-  resources :users
+  resources :clients
+  resources :visitors
+	resources :users do
+		collection do
+			post 'remind_password'
+		end
+		member do
+			get 'activate/:set_password_token', action: 'activate', as: 'activate'
+	  		get 'edit_password'
+			get 'reset_password/:set_password_token', action: 'reset_password', as: 'reset_password'
+	  		patch 'update_password'
+			patch 'update_activation'
+	 	end
+	end
   resources :sessions, only: [:new, :create, :delete]
+  resources :chats
+  resources :messages
+  resources :groups
 
   root to: 'pages#home'
   
   match '/help',    to: 'pages#help',   	via: 'get'
   match '/about',   to: 'pages#about',  	via: 'get'
-  match '/signup',  to: 'users#new',   		via: 'get'
+  
+  match '/signup',  to: 'clients#new',   	via: 'get'
   match '/signin',  to: 'sessions#new',		via: 'get'
   match '/signout', to: 'sessions#destroy', 	via: 'delete'
-  
+  match '/forgot_password', to: 'users#forgot_password', via: 'get'  
 
 
   # The priority is based upon order of creation:
