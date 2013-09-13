@@ -1,0 +1,52 @@
+class User < ActiveRecord::Base
+
+	VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+
+	
+	belongs_to :client, foreign_key: :client_id, class_name: "Client"
+	has_one :owned_client, foreign_key: :owner_id, class_name: "Client"
+	has_and_belongs_to_many :groups	
+	has_many :messages, as: :messagable 
+	has_many :chats, through: :messages
+
+	validates :name, presence: true, length: { maximum: 50 }
+	validates :email, presence: true, format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }
+	validates :password_confirmation, on: :create, presence: true
+	validates :password, on: :create, length: { minimum: 6 }
+
+	validates :password_confirmation, on: :create, presence: true
+	validates :password, n: :create, length: { minimum: 6 }
+
+	has_secure_password
+
+	scope :same_client_as, ->(user) { where("client_id = ?", user.client_id) }	
+
+  before_create :create_remember_token
+  before_save do 
+  	email.downcase!
+  end
+
+  def owner?
+    !self.owned_client.nil?
+  end
+
+  def User.new_remember_token
+    token = loop do
+    	random_token = SecureRandom.urlsafe_base64(nil, false)
+    	break random_token unless Client.where(api_token: random_token).exists?
+    end
+  end
+
+  def User.encrypt(token)
+  	unless token.nil?
+    	Digest::SHA1.hexdigest(token)
+    end
+  end
+
+  private
+
+    def create_remember_token
+      self.remember_token = User.encrypt(User.new_remember_token)
+    end
+
+end

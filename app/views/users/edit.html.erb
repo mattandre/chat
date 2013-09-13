@@ -1,0 +1,24 @@
+<% provide(:title, "Edit user") %>
+<h1>Update your profile</h1>
+
+<div class="row">
+  <div class="span6 offset3">
+    <%= form_for(@user) do |f| %>
+      <%= render 'shared/error_messages' %>
+
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+
+      <%= f.label :email %>
+      <%= f.text_field :email %>
+
+			<%= f.label :group_ids, "Groups" %>
+      <%= collection_select :user, :group_ids, Group.same_client_as(current_user), :id,
+      				:name, { selected: @user.group_ids }, 
+      				{ multiple: true, name: "user[group_ids][]" } %>
+
+      <%= f.submit "Save changes", class: "btn btn-large btn-primary" %>
+    <% end %>
+
+  </div>
+</div>
